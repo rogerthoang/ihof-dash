@@ -1,12 +1,25 @@
-import HomePage from '@/app/(delete-this-and-modify-page.tsx)/HomePage';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 /**
- * The main page component that renders the HomePage component.
+ * The main page component that redirects to the login page.
  *
- * @returns {JSX.Element} The rendered HomePage component.
+ * @returns {JSX.Element} The rendered component.
  */
 const Page = () => {
-    return <HomePage />;
+    const router = useRouter();
+
+    useEffect(() => {
+        router.push('/login');
+    }, [router]);
+
+    return (
+        <div className="flex h-screen w-screen items-center justify-center">
+            <p className="text-muted-foreground">Redirecting to login...</p>
+        </div>
+    );
 };
 
 export default Page;
