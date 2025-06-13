@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 import { useAuthStore } from '@/lib/store/auth-store';
 import { useUIStore } from '@/lib/store/ui-store';
@@ -18,7 +19,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail
+  SidebarRail,
+  useSidebar
 } from '@/registry/new-york-v4/ui/sidebar';
 
 import {
@@ -92,6 +94,19 @@ export function DashboardSidebar() {
   const { user } = useAuthStore();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
   const pathname = usePathname();
+  const { toggleSidebar: toggleSidebarInternal, setOpen } = useSidebar();
+
+  // Sync our Zustand store with the sidebar's internal state
+  useEffect(() => {
+    // Set the initial state when the component mounts
+    setOpen(!sidebarCollapsed);
+  }, [sidebarCollapsed, setOpen]);
+
+  // Handle toggling the sidebar
+  const handleToggleSidebar = () => {
+    toggleSidebar(); // Update our Zustand store
+    toggleSidebarInternal(); // Update the sidebar's internal state
+  };
 
   // Filter navigation items based on user role
   const filteredNavItems = navItems.filter(
@@ -99,7 +114,7 @@ export function DashboardSidebar() {
   );
 
   return (
-    <Sidebar collapsible={sidebarCollapsed ? 'icon' : undefined} className="border-r shrink-0">
+    <Sidebar collapsible="icon" className="border-r shrink-0">
       <SidebarHeader className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">
           <LayoutDashboard className="h-6 w-6" />
@@ -108,7 +123,7 @@ export function DashboardSidebar() {
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={toggleSidebar} 
+          onClick={handleToggleSidebar} 
           className="h-8 w-8"
         >
           {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
